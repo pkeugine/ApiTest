@@ -1,17 +1,22 @@
 <?php
 $json_data = file_get_contents("php://input");
 $obj_json = json_decode($json_data);
-$singer = $obj_json->action->detailParams->singer->value;
-$num_album = $obj_json->action->detailParams->num_album->origin;
+$received = $obj_json->action->detailParams;
+$class1 = $received->class1->value;
+$class2 = $received->class2->value;
+$class3 = $received->class3->value;
+$class4 = $received->class4->value;
+$class5 = $received->class5->value;
+$class6 = $received->class6->value;
 
-$text = 'order checked : '.$singer.'s '.$num_album.' has been ordered.';
+$schedule = '당신의 스케줄: '.$class1.', '.$class2.', '.$class3.', '.$class4.', '.$class5.', '.$class6.'입니다.';
 $jayParseAry = [
-  "version" => "2.0",
+  "version" => "0.0",
   "template" => [
     "outputs" => [
       [
         "simpleText"=> [
-          "text" => $text
+          "text" => $schedule
         ]
       ]
     ]
