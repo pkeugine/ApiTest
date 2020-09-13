@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import time
 
 from bs4 import BeautifulSoup
@@ -39,12 +40,12 @@ elem = WebDriverWait(browser, 10).until(EC.presence_of_element_located((By.XPATH
 main_url = browser.current_url
 soup = BeautifulSoup(browser.page_source, "lxml")
 
-browser.get_screenshot_as_file("klas.png")
+# browser.get_screenshot_as_file("klas.png")
 subjects = soup.find('ul', attrs={'class': 'subjectlist listbox'})
 
 tag = soup.find_all("p", attrs={'class': 'title-text'})
 
-print(tag[0].get_text())
+# print(tag[0].get_text())
 for subject in subjects:
     title = subject.find("div", attrs={'class': 'left'}).get_text()
     print(title)

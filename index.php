@@ -1,32 +1,60 @@
 <?php
+require __DIR__ . '/vendor/autoload.php';
+use Goutte\Client;
+
 $json_data = file_get_contents("php://input");
 $obj_json = json_decode($json_data);
-$received = $obj_json->action->detailParams;
-$class1 = $received->Classes->value;
 
-//$class2 = $received->class2->value;
-//$class3 = $received->class3->value;
-//$class4 = $received->class4->value;
-//$class5 = $received->class5->value;
-//$class6 = $received->class6->value;
+$client = new Client();
+$crawler = $client->request('GET', 'https://www.kw.ac.kr/ko/life/notice.jsp?MaxRows=10&tpage=1&searchKey=1&searchVal=&srCategoryId=');
+$type = "basicCard";
 
-//$schedule = '당신의 스케줄: '.$class1.', '.$class2.', '.$class3.', '.$class4.', '.$class5.', '.$class6.'입니다.';
-$schedule = '당신의 스케줄: '.$class1.' 수업을 들어야해요.';
-$jayParseAry = [
-  "version" => "2.0",
-  "template" => [
-    "outputs" => [
-      [
-        "basicCard" => [
-		  "title" => "testing",	
-          "description" => $schedule,
-		  "thumbnail" => [
-			"imageUrl" => "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT4BJ9LU4Ikr_EvZLmijfcjzQKMRCJ2bO3A8SVKNuQ78zu2KOqM"
-		  ]
-        ]
-      ]
-    ]
-  ]
+$tempItem->title = "tempo";
+$tempItem->description = "this is a description";
+$tempItem->imageUrl = "http://k.kakaocdn.net/dn/83BvP/bl20duRC1Q1/lj3JUcmrzC53YIjNDkqbWK/i_6piz1p.jpg";
+$tempItem->thumbnail = [ "imageUrl" => $tempItem->imageUrl ];
+$button = 	[
+				"action" => "message",
+				"label" => "open",
+				"messageText" => "tada! we found it"
+			];
+$tempItem->buttons = [ $button ];
+
+//===========================================
+//===========================================
+//===========================================
+$item = 
+	[
+		"title" => $tempItem->title,
+		"description" => $tempItem->description,
+		//"thumbnail" => $tempItem->thumbnail,
+		"buttons" => $tempItem->buttons
+	];
+$items = [$item, $item];
+$carousel =
+	[
+		"type" => $type,
+		"items" => $items
+		//--header currently only supports CommerceCard--
+		//,"header"
+	];
+
+//========== CREATE OUTPUTS PART ==========
+$outputs = [ "carousel" => $carousel ];
+$templateOutputs = [ $outputs ];
+
+//========== RESPONSE INFORMATION ==========
+$responseVersion = "2.0";
+$responseTemplate = [ "outputs" => $templateOutputs ];
+$responseContext = [];
+$responseData = [];
+
+//========== FINAL JSON FORMAT ==========
+$responseJson = [
+	"version" => $responseVersion,
+	"template" => $responseTemplate
+	//"context" => $responseContext,
+	//"data" => $responseData
 ];
 
-echo json_encode($jayParseAry, JSON_UNESCAPED_UNICODE);
+echo json_encode($responseJson, JSON_UNESCAPED_UNICODE);
