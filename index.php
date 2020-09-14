@@ -1,60 +1,22 @@
 <?php
-require __DIR__ . '/vendor/autoload.php';
-use Goutte\Client;
+require 'vendor/autoload.php';
+use Symfony\Component\DomCrawler\Crawler;
+use Symfony\Component\CssSelector\CssSelectorConverter;
 
-$json_data = file_get_contents("php://input");
-$obj_json = json_decode($json_data);
+$url = 'https://www.kw.ac.kr/ko/life/notice.jsp';
+$client = new GuzzleHttp\Client();
+$res = $client->request('GET', $url);
 
-$client = new Client();
-$crawler = $client->request('GET', 'https://www.kw.ac.kr/ko/life/notice.jsp?MaxRows=10&tpage=1&searchKey=1&searchVal=&srCategoryId=');
-$type = "basicCard";
+// echo $res->getStatusCode(); // 200
+// echo $res->getHeader('content-type')[0];
 
-$tempItem->title = "tempo";
-$tempItem->description = "this is a description";
-$tempItem->imageUrl = "http://k.kakaocdn.net/dn/83BvP/bl20duRC1Q1/lj3JUcmrzC53YIjNDkqbWK/i_6piz1p.jpg";
-$tempItem->thumbnail = [ "imageUrl" => $tempItem->imageUrl ];
-$button = 	[
-				"action" => "message",
-				"label" => "open",
-				"messageText" => "tada! we found it"
-			];
-$tempItem->buttons = [ $button ];
+$html = ''.$res->getBody();
 
-//===========================================
-//===========================================
-//===========================================
-$item = 
-	[
-		"title" => $tempItem->title,
-		"description" => $tempItem->description,
-		//"thumbnail" => $tempItem->thumbnail,
-		"buttons" => $tempItem->buttons
-	];
-$items = [$item, $item];
-$carousel =
-	[
-		"type" => $type,
-		"items" => $items
-		//--header currently only supports CommerceCard--
-		//,"header"
-	];
+// get the data from $url
+$crawler = new Crawler($html);
 
-//========== CREATE OUTPUTS PART ==========
-$outputs = [ "carousel" => $carousel ];
-$templateOutputs = [ $outputs ];
+$nodeValues = $crawler->filter('a')->each(function (Crawler $node, $i) {
+	return $node->text();
+});
 
-//========== RESPONSE INFORMATION ==========
-$responseVersion = "2.0";
-$responseTemplate = [ "outputs" => $templateOutputs ];
-$responseContext = [];
-$responseData = [];
-
-//========== FINAL JSON FORMAT ==========
-$responseJson = [
-	"version" => $responseVersion,
-	"template" => $responseTemplate
-	//"context" => $responseContext,
-	//"data" => $responseData
-];
-
-echo json_encode($responseJson, JSON_UNESCAPED_UNICODE);
+print_r($nodeValues);
